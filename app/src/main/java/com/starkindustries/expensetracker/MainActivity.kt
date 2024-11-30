@@ -1,14 +1,17 @@
 package com.starkindustries.expensetracker
 
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -42,6 +45,7 @@ class MainActivity : ComponentActivity() {
     private val RC_SIGN_IN = 1001
     private var isSignedIn by mutableStateOf(false)
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,6 +59,7 @@ class MainActivity : ComponentActivity() {
             startGoogleSignIn(googleSignInClient)
         } else {
             isSignedIn = true
+            syncTransactionsToFirebase()
         }
 
         setContent {
@@ -78,11 +83,13 @@ class MainActivity : ComponentActivity() {
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun AppNavigation(navController: NavHostController, googleSignInClient: GoogleSignInClient) {
         NavGraph(navController = navController, googleSignInClient = googleSignInClient)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun NavGraph(navController: NavHostController, googleSignInClient: GoogleSignInClient) {
         NavHost(
@@ -152,9 +159,14 @@ class MainActivity : ComponentActivity() {
         auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
                 isSignedIn = true
+                transactionViewModel.syncTransactionsFromFirebase()
             } else {
                 Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun syncTransactionsToFirebase() {
+        transactionViewModel.syncTransactionsToFirebase()
     }
 }

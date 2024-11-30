@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.starkindustries.expensetracker.data.local.db.dao.TransactionDao
 import com.starkindustries.expensetracker.data.local.db.entities.TransactionEntity
 
-@Database(entities = [TransactionEntity::class], version = 1, exportSchema = false)
+@Database(entities = [TransactionEntity::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun transactionDao(): TransactionDao

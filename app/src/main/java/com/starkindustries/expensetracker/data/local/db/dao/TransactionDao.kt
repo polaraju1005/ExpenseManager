@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TransactionDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     suspend fun insertTransaction(transaction: TransactionEntity)
 
     @Update
@@ -18,6 +18,9 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun getAllTransactions(): Flow<List<TransactionEntity>>
+
+    @Query("SELECT COUNT(*) FROM transactions WHERE id = :transactionId")
+    suspend fun exists(transactionId: Long): Boolean
 
     @Query("SELECT * FROM transactions WHERE description LIKE :description ORDER BY date DESC")
     fun filterTransactionsByDescription(description: String): Flow<List<TransactionEntity>>

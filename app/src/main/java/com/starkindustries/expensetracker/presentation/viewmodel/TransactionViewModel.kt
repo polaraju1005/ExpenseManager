@@ -1,5 +1,6 @@
 package com.starkindustries.expensetracker.presentation.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.starkindustries.expensetracker.data.local.db.entities.TransactionEntity
@@ -14,9 +15,29 @@ class TransactionViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
-    fun addTransaction(transaction: TransactionEntity) {
+    fun addTransaction(transaction: TransactionEntity,context: Context) {
         viewModelScope.launch {
-            transactionRepository.addTransaction(transaction)
+            transactionRepository.addTransaction(transaction,context)
+        }
+    }
+
+    fun syncTransactionsFromFirebase() {
+        viewModelScope.launch {
+            try {
+                transactionRepository.syncTransactions()
+            } catch (e: Exception) {
+                throw Exception("Error syncing transactions from Firebase: ${e.message}")
+            }
+        }
+    }
+
+    fun syncTransactionsToFirebase() {
+        viewModelScope.launch {
+            try {
+                transactionRepository.syncTransactionsToFirebase()
+            } catch (e: Exception) {
+                throw Exception("Error syncing transactions to Firebase: ${e.message}")
+            }
         }
     }
 

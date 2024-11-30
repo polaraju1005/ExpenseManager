@@ -159,7 +159,7 @@ fun TransactionEntryScreen(
                         amount = amount.toDouble(),
                         description = description
                     )
-                    viewModel.addTransaction(transaction)
+                    viewModel.addTransaction(transaction,context)
                     onTransactionAdded()
                 } else {
                     Toast.makeText(context, "Please fill all required fields", Toast.LENGTH_SHORT)
