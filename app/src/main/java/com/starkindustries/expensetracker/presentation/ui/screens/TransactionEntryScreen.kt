@@ -80,10 +80,9 @@ fun TransactionEntryScreen(
 
     val systemUiController = rememberSystemUiController()
 
-    // Set the status bar color
     systemUiController.setStatusBarColor(
-        color = Purple80, // Set the desired color for the status bar
-        darkIcons = false    // Set to `true` for dark icons, `false` for light icons
+        color = Purple80,
+        darkIcons = false
     )
 
     var date by remember { mutableStateOf("") }
@@ -100,7 +99,7 @@ fun TransactionEntryScreen(
         calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_MONTH)
     )
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()

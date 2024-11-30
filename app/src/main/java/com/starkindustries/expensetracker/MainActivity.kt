@@ -68,10 +68,9 @@ class MainActivity : ComponentActivity() {
             ExpenseTheme {
                 val systemUiController = rememberSystemUiController()
 
-                // Set the status bar color
                 systemUiController.setStatusBarColor(
-                    color = Purple80, // Set the desired color for the status bar
-                    darkIcons = true    // Set to `true` for dark icons, `false` for light icons
+                    color = Purple80,
+                    darkIcons = true
                 )
 
                 val navController = rememberNavController()

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -69,10 +70,8 @@ fun TransactionListScreen(
 
     val systemUiController = rememberSystemUiController()
 
-    // Set the status bar color
     systemUiController.setStatusBarColor(
-        color = Purple80, // Set the desired color for the status bar
-        darkIcons = false    // Set to `true` for dark icons, `false` for light icons
+        color = Purple80, darkIcons = false
     )
 
     var searchText by remember { mutableStateOf("") }
@@ -85,6 +84,8 @@ fun TransactionListScreen(
         viewModel.syncTransactionsToFirebase()
         viewModel.syncDeletions(context)
     }
+
+    val groupedTransactions = transactions.groupBy { it.type }
 
     Box(
         modifier = Modifier
@@ -119,17 +120,25 @@ fun TransactionListScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn {
-                items(transactions.filter {
-                    // Filter transactions by both description and type
-                    it.description?.contains(searchText, ignoreCase = true) == true ||
-                            it.type.contains(searchText, ignoreCase = true) ||
-                            searchText.isEmpty()
-                }) { transaction ->
-                    TransactionListItem(
-                        transaction = transaction,
-                        onDelete = { onTransactionDeleted(transaction.id) },
-                        navController
-                    )
+                groupedTransactions.forEach { (type, items) ->
+                    itemsIndexed(items.filter {
+                        it.description?.contains(
+                            searchText,
+                            ignoreCase = true
+                        ) == true || it.type.contains(
+                            searchText,
+                            ignoreCase = true
+                        ) || searchText.isEmpty()
+                    }) { index, transaction ->
+                        val typeCount = index + 1
+
+                        TransactionListItem(
+                            transaction = transaction,
+                            onDelete = { onTransactionDeleted(transaction.id) },
+                            navController = navController,
+                            typeCount = typeCount
+                        )
+                    }
                 }
             }
         }
@@ -181,7 +190,10 @@ fun TransactionListScreen(
 
 @Composable
 fun TransactionListItem(
-    transaction: TransactionEntity, onDelete: () -> Unit, navController: NavController
+    transaction: TransactionEntity,
+    onDelete: () -> Unit,
+    navController: NavController,
+    typeCount: Int
 ) {
     var isSwiped by remember { mutableStateOf(false) }
     var offsetX by remember { mutableFloatStateOf(0f) }
@@ -222,20 +234,25 @@ fun TransactionListItem(
                         text = transaction.description ?: "No Description",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = Color.Black,
+                        fontSize = 18.sp
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = transaction.type, style = MaterialTheme.typography.bodyMedium,color = Color.Black
+                        text = "${transaction.type} #$typeCount",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(4.dp))
 
                     transaction.date.let { it ->
                         DateFormatter.formatDate(it)?.let {
                             Text(
-                                text = it, style = MaterialTheme.typography.bodySmall,color = Color.Black
+                                text = it,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Black
                             )
                         }
                     }

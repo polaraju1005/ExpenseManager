@@ -22,12 +22,6 @@ interface TransactionDao {
     @Query("SELECT COUNT(*) FROM transactions WHERE id = :transactionId")
     suspend fun exists(transactionId: Long): Boolean
 
-    @Query("SELECT * FROM transactions WHERE description LIKE :description ORDER BY date DESC")
-    fun filterTransactionsByDescription(description: String): Flow<List<TransactionEntity>>
-
-    @Query("SELECT * FROM transactions WHERE type = :type ORDER BY date DESC")
-    fun filterTransactionsByType(type: String): Flow<List<TransactionEntity>>
-
     @Query("SELECT * FROM transactions WHERE id = :transactionId LIMIT 1")
     suspend fun getTransactionById(transactionId: Long): TransactionEntity?
 

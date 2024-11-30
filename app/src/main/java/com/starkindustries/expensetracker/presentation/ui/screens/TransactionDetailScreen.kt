@@ -70,16 +70,21 @@ fun TransactionDetailScreen(
 
     val systemUiController = rememberSystemUiController()
 
-    // Set the status bar color
     systemUiController.setStatusBarColor(
-        color = Purple80, // Set the desired color for the status bar
-        darkIcons = false    // Set to `true` for dark icons, `false` for light icons
+        color = Purple80,
+        darkIcons = false
     )
 
     val transaction by viewModel.getTransactionById(transactionId).collectAsState(initial = null)
+    val allTransactions by viewModel.getAllTransactions().collectAsState(initial = emptyList())
     var isEditMode by remember { mutableStateOf(false) }
 
     if (transaction != null) {
+
+        val transactionType = transaction?.type
+        val typeCount = allTransactions.count { it.type == transactionType }
+        val transactionTypeWithCount = "$transactionType#$typeCount"
+
         var updatedDescription by remember { mutableStateOf(transaction?.description ?: "") }
         var updatedAmount by remember { mutableStateOf(transaction?.amount.toString()) }
         var updatedDate by remember { mutableStateOf(transaction?.date?.toString() ?: "") }
@@ -182,7 +187,7 @@ fun TransactionDetailScreen(
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = transaction!!.type,
+                        text = transactionTypeWithCount,
                         style = MaterialTheme.typography.bodySmall,
                         color = Purple80,
                         fontSize = 17.sp
