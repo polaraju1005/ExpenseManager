@@ -2,6 +2,7 @@ package com.starkindustries.expensetracker.presentation.ui.screens
 
 import android.app.DatePickerDialog
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,12 +33,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,11 +55,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.starkindustries.expensetracker.R
 import com.starkindustries.expensetracker.data.local.db.entities.TransactionEntity
 import com.starkindustries.expensetracker.presentation.viewmodel.TransactionViewModel
 import com.starkindustries.expensetracker.ui.theme.Purple80
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,8 +78,8 @@ fun TransactionEntryScreen(
     var amount by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val context = LocalContext.current
-
     val calendar = Calendar.getInstance()
+
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth -> date = "$dayOfMonth/${month + 1}/$year" },
@@ -125,7 +135,7 @@ fun TransactionEntryScreen(
         LabeledOutlinedTextField(
             label = "Date",
             content = date.ifEmpty { "Select Date" },
-            onClick = { datePickerDialog.show() },
+            onClick = {  datePickerDialog.show() },
             isRequired = true
         )
 
@@ -370,7 +380,11 @@ fun RadioOption(
         ) {
             RadioButton(
                 selected = selected,
-                onClick = null
+                onClick = null,
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = Purple80,
+                    unselectedColor = Color.Gray
+                )
             )
             Text(
                 text = label,

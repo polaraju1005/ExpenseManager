@@ -247,7 +247,11 @@ fun TransactionListItem(
                 .fillMaxHeight()
                 .width(50.dp)
                 .align(Alignment.CenterEnd)
-                .clickable { onDelete() }
+                .clickable {
+                    onDelete()
+                    isSwiped = false
+                    offsetX = 0f
+                }
                 .padding(6.dp), contentAlignment = Alignment.Center) {
                 Image(
                     painter = painterResource(id = R.drawable.swipe_delete),
