@@ -8,27 +8,31 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.starkindustries.expensetracker.presentation.ui.screens.TransactionEntryScreen
-import com.starkindustries.expensetracker.presentation.ui.screens.SignInScreen
-import com.starkindustries.expensetracker.presentation.viewmodel.TransactionViewModel
-import com.starkindustries.expensetracker.ui.theme.ExpenseTheme
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.AuthCredential
-import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.starkindustries.expensetracker.presentation.ui.screens.SignInScreen
+import com.starkindustries.expensetracker.presentation.ui.screens.TransactionDetailScreen
+import com.starkindustries.expensetracker.presentation.ui.screens.TransactionEntryScreen
 import com.starkindustries.expensetracker.presentation.ui.screens.TransactionListScreen
+import com.starkindustries.expensetracker.presentation.viewmodel.TransactionViewModel
+import com.starkindustries.expensetracker.ui.theme.ExpenseTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -101,9 +105,22 @@ class MainActivity : ComponentActivity() {
                 TransactionEntryScreen(
                     viewModel = transactionViewModel,
                     onTransactionAdded = {
+                        navController.popBackStack()
                     },
                     onBackPressed = {
-                       navController.popBackStack()
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable("transaction_details_screen/{transactionId}") { backStackEntry ->
+                val transactionId = backStackEntry.arguments?.getString("transactionId")?.toLong()
+                    ?: return@composable
+                TransactionDetailScreen(
+                    navController = navController,
+                    transactionId = transactionId,
+                    viewModel = transactionViewModel,
+                    onBackPressed = {
+                        navController.popBackStack()
                     }
                 )
             }

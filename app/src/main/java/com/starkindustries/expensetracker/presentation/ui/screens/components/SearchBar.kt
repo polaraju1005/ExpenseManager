@@ -44,8 +44,8 @@ fun SearchBar(
     onQueryChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
     rotatingWords: List<String> = listOf(
-        "Search by context",
-        "Search by transaction"
+        "Search by description",
+        "Search by transaction type"
     )
 ) {
     var currentWordIndex by remember { mutableIntStateOf(0) }

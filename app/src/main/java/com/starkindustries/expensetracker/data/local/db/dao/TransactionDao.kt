@@ -24,4 +24,7 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions WHERE type = :type ORDER BY date DESC")
     fun filterTransactionsByType(type: String): Flow<List<TransactionEntity>>
+
+    @Query("SELECT * FROM transactions WHERE id = :transactionId LIMIT 1")
+    suspend fun getTransactionById(transactionId: Long): TransactionEntity?
 }

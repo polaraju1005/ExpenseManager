@@ -28,4 +28,12 @@ class TransactionViewModel @Inject constructor(
         }
     }
 
+    fun getTransactionById(id: Long): Flow<TransactionEntity?> = transactionRepository.getTransactionById(id)
+
+    fun updateTransaction(transaction: TransactionEntity) {
+        viewModelScope.launch {
+            transactionRepository.updateTransaction(transaction)
+        }
+    }
+
 }

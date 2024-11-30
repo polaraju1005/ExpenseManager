@@ -4,6 +4,7 @@ import com.starkindustries.expensetracker.data.local.db.dao.TransactionDao
 import com.starkindustries.expensetracker.data.local.db.entities.TransactionEntity
 import com.starkindustries.expensetracker.data.remote.api.FirebaseApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class TransactionRepository @Inject constructor(
@@ -38,4 +39,14 @@ class TransactionRepository @Inject constructor(
             transactionDao.insertTransaction(it)
         }
     }
+
+    fun getTransactionById(id: Long): Flow<TransactionEntity?> = flow {
+        emit(transactionDao.getTransactionById(id))
+    }
+
+    suspend fun updateTransaction(transaction: TransactionEntity) {
+        transactionDao.updateTransaction(transaction)
+    }
+
+
 }

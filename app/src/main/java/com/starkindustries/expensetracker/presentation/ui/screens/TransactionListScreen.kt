@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +54,7 @@ import com.starkindustries.expensetracker.presentation.ui.screens.components.Sea
 import com.starkindustries.expensetracker.presentation.viewmodel.TransactionViewModel
 import com.starkindustries.expensetracker.ui.theme.Purple80
 import com.starkindustries.expensetracker.ui.theme.TextColorSecondary
+import com.starkindustries.expensetracker.utils.DateFormatter
 import kotlin.math.roundToInt
 
 @Composable
@@ -100,28 +102,30 @@ fun TransactionListScreen(
 
             LazyColumn {
                 items(transactions.filter {
-                    it.description?.contains(
-                        searchText, ignoreCase = true
-                    ) == true || searchText.isEmpty()
+                    // Filter transactions by both description and type
+                    it.description?.contains(searchText, ignoreCase = true) == true ||
+                            it.type.contains(searchText, ignoreCase = true) ||
+                            searchText.isEmpty()
                 }) { transaction ->
                     TransactionListItem(
                         transaction = transaction,
-                        onDelete = { onTransactionDeleted(transaction.id) })
+                        onDelete = { onTransactionDeleted(transaction.id) },
+                        navController
+                    )
                 }
             }
         }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 92.dp)
-                .shadow(8.dp, shape = RoundedCornerShape(32.dp))
-                .background(Purple80, shape = RoundedCornerShape(16.dp))
-                .height(56.dp)
-                .fillMaxWidth(0.5f)
-                .clickable {
-                    navController.navigate("transaction_entry_screen")
-                }) {
+        Box(modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 92.dp)
+            .shadow(8.dp, shape = RoundedCornerShape(32.dp))
+            .background(Purple80, shape = RoundedCornerShape(16.dp))
+            .height(56.dp)
+            .fillMaxWidth(0.5f)
+            .clickable {
+                navController.navigate("transaction_entry_screen")
+            }) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -158,22 +162,24 @@ fun TransactionListScreen(
 
 
 @Composable
-fun TransactionListItem(transaction: TransactionEntity, onDelete: () -> Unit) {
+fun TransactionListItem(
+    transaction: TransactionEntity, onDelete: () -> Unit, navController: NavController
+) {
     var isSwiped by remember { mutableStateOf(false) }
-    var offsetX by remember { mutableStateOf(0f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures { _, dragAmount ->
-                    offsetX =
-                        (offsetX + dragAmount).coerceIn(-200f, 0f)
-                    isSwiped = offsetX <= -100f
-                }
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)
+        .pointerInput(Unit) {
+            detectHorizontalDragGestures { _, dragAmount ->
+                offsetX = (offsetX + dragAmount).coerceIn(-200f, 0f)
+                isSwiped = offsetX <= -100f
             }
-    ) {
+        }
+        .clickable {
+            navController.navigate("transaction_details_screen/${transaction.id}")
+        }) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -203,14 +209,17 @@ fun TransactionListItem(transaction: TransactionEntity, onDelete: () -> Unit) {
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = transaction.type ?: "N/A",
-                        style = MaterialTheme.typography.bodyMedium
+                        text = transaction.type, style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    Text(
-                        text = transaction.date, style = MaterialTheme.typography.bodySmall
-                    )
+                    transaction.date.let { it ->
+                        DateFormatter.formatDate(it)?.let {
+                            Text(
+                                text = it, style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
                 }
 
                 Column(
@@ -226,15 +235,12 @@ fun TransactionListItem(transaction: TransactionEntity, onDelete: () -> Unit) {
         }
 
         if (isSwiped) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(50.dp)
-                    .align(Alignment.CenterEnd)
-                    .clickable { onDelete() }
-                    .padding(6.dp),
-                contentAlignment = Alignment.Center
-            ) {
+            Box(modifier = Modifier
+                .fillMaxHeight()
+                .width(50.dp)
+                .align(Alignment.CenterEnd)
+                .clickable { onDelete() }
+                .padding(6.dp), contentAlignment = Alignment.Center) {
                 Image(
                     painter = painterResource(id = R.drawable.swipe_delete),
                     contentDescription = "Delete",
