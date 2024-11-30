@@ -20,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -35,6 +36,7 @@ import com.starkindustries.expensetracker.presentation.ui.screens.TransactionEnt
 import com.starkindustries.expensetracker.presentation.ui.screens.TransactionListScreen
 import com.starkindustries.expensetracker.presentation.viewmodel.TransactionViewModel
 import com.starkindustries.expensetracker.ui.theme.ExpenseTheme
+import com.starkindustries.expensetracker.ui.theme.Purple80
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)) // Get it from Firebase console
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail().build()
 
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -64,6 +66,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ExpenseTheme {
+                val systemUiController = rememberSystemUiController()
+
+                // Set the status bar color
+                systemUiController.setStatusBarColor(
+                    color = Purple80, // Set the desired color for the status bar
+                    darkIcons = true    // Set to `true` for dark icons, `false` for light icons
+                )
+
                 val navController = rememberNavController()
 
                 Surface(

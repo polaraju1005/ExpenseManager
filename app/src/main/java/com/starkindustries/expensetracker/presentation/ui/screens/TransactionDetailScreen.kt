@@ -50,6 +50,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.starkindustries.expensetracker.R
 import com.starkindustries.expensetracker.presentation.viewmodel.TransactionViewModel
 import com.starkindustries.expensetracker.ui.theme.Purple80
@@ -66,6 +67,15 @@ fun TransactionDetailScreen(
     viewModel: TransactionViewModel,
     onBackPressed: () -> Unit
 ) {
+
+    val systemUiController = rememberSystemUiController()
+
+    // Set the status bar color
+    systemUiController.setStatusBarColor(
+        color = Purple80, // Set the desired color for the status bar
+        darkIcons = false    // Set to `true` for dark icons, `false` for light icons
+    )
+
     val transaction by viewModel.getTransactionById(transactionId).collectAsState(initial = null)
     var isEditMode by remember { mutableStateOf(false) }
 
@@ -95,7 +105,7 @@ fun TransactionDetailScreen(
         ) {
             TopAppBar(
                 title = {
-                    Text(text = transaction!!.type)
+                    Text(text = transaction!!.type, color = Color.Black)
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
@@ -249,6 +259,9 @@ fun TransactionDetailScreen(
                             focusedBorderColor = Purple80,
                             unfocusedBorderColor = Color(0xFFe0e0e5),
                             cursorColor = Color.Black
+                        ),
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = Color.Black
                         )
                     )
                 } else {
@@ -298,7 +311,8 @@ fun TransactionDetailScreen(
                         Text(
                             text = "₹",
                             style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.align(Alignment.CenterVertically)
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            color = Color.Black
                         )
                         Spacer(modifier = Modifier.width(8.dp))
 

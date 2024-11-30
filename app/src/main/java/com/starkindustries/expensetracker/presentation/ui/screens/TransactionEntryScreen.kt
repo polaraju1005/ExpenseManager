@@ -1,6 +1,8 @@
 package com.starkindustries.expensetracker.presentation.ui.screens
 
 import android.app.DatePickerDialog
+import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
@@ -48,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -73,6 +77,15 @@ import java.util.Locale
 fun TransactionEntryScreen(
     viewModel: TransactionViewModel, onTransactionAdded: () -> Unit, onBackPressed: () -> Unit
 ) {
+
+    val systemUiController = rememberSystemUiController()
+
+    // Set the status bar color
+    systemUiController.setStatusBarColor(
+        color = Purple80, // Set the desired color for the status bar
+        darkIcons = false    // Set to `true` for dark icons, `false` for light icons
+    )
+
     var date by remember { mutableStateOf("") }
     var type by remember { mutableStateOf("Expense") }
     var amount by remember { mutableStateOf("") }
@@ -87,7 +100,7 @@ fun TransactionEntryScreen(
         calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_MONTH)
     )
-
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -97,7 +110,8 @@ fun TransactionEntryScreen(
             Text(
                 text = if (type == "Expense") "Record Expense" else "Record Income",
                 style = MaterialTheme.typography.headlineSmall,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = Color.Black
             )
         }, navigationIcon = {
             IconButton(onClick = onBackPressed) {
@@ -135,7 +149,7 @@ fun TransactionEntryScreen(
         LabeledOutlinedTextField(
             label = "Date",
             content = date.ifEmpty { "Select Date" },
-            onClick = {  datePickerDialog.show() },
+            onClick = { datePickerDialog.show() },
             isRequired = true
         )
 
@@ -169,7 +183,7 @@ fun TransactionEntryScreen(
                         amount = amount.toDouble(),
                         description = description
                     )
-                    viewModel.addTransaction(transaction,context)
+                    viewModel.addTransaction(transaction, context)
                     onTransactionAdded()
                 } else {
                     Toast.makeText(context, "Please fill all required fields", Toast.LENGTH_SHORT)
@@ -185,7 +199,9 @@ fun TransactionEntryScreen(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4c3cce)),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text(text = "Save", color = Color.White)
+            Text(
+                text = "Save", color = Color.White
+            )
         }
     }
 }
@@ -249,7 +265,9 @@ fun LabeledAmountField(
                             }
                         },
                         keyboardOptions = keyboardOptions.copy(keyboardType = KeyboardType.Number),
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = Color.Black
+                        ),
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -262,7 +280,8 @@ fun LabeledAmountField(
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier
                             .padding(start = 16.dp)
-                            .align(Alignment.CenterStart)
+                            .align(Alignment.CenterStart),
+                        color = Color.Black
                     )
 
                     Divider(
@@ -353,6 +372,9 @@ fun LabeledOutlinedTextField(
                     focusedBorderColor = Purple80,
                     unfocusedBorderColor = Color(0xFFe0e0e5),
                     cursorColor = Color.Black
+                ),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    color = Color.Black
                 )
             )
         }

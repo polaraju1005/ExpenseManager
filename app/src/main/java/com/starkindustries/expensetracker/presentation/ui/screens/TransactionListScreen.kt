@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.starkindustries.expensetracker.R
 import com.starkindustries.expensetracker.data.local.db.entities.TransactionEntity
 import com.starkindustries.expensetracker.presentation.ui.screens.components.BottomNavigationBar
@@ -65,6 +66,15 @@ fun TransactionListScreen(
     viewModel: TransactionViewModel,
     onTransactionDeleted: (Long) -> Unit
 ) {
+
+    val systemUiController = rememberSystemUiController()
+
+    // Set the status bar color
+    systemUiController.setStatusBarColor(
+        color = Purple80, // Set the desired color for the status bar
+        darkIcons = false    // Set to `true` for dark icons, `false` for light icons
+    )
+
     var searchText by remember { mutableStateOf("") }
     val transactions by viewModel.getAllTransactions().collectAsState(initial = emptyList())
     var selectedItem by remember { mutableIntStateOf(0) }
@@ -145,14 +155,14 @@ fun TransactionListScreen(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Transaction",
                     modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = Color.White
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
                     text = "Add New",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimary)
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
                 )
             }
         }
@@ -211,20 +221,21 @@ fun TransactionListItem(
                     Text(
                         text = transaction.description ?: "No Description",
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = transaction.type, style = MaterialTheme.typography.bodyMedium
+                        text = transaction.type, style = MaterialTheme.typography.bodyMedium,color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(4.dp))
 
                     transaction.date.let { it ->
                         DateFormatter.formatDate(it)?.let {
                             Text(
-                                text = it, style = MaterialTheme.typography.bodySmall
+                                text = it, style = MaterialTheme.typography.bodySmall,color = Color.Black
                             )
                         }
                     }
@@ -236,7 +247,8 @@ fun TransactionListItem(
                     Text(
                         text = "₹ ${transaction.amount}",
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
                     )
                 }
             }

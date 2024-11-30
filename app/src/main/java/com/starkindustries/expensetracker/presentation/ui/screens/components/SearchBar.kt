@@ -93,7 +93,7 @@ fun SearchBar(
                 Box(modifier = Modifier.height(20.dp)) {
                     Text(
                         text = rotatingWords[currentWordIndex],
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 13.sp,
                         modifier = Modifier
                             .offset(y = animatedOffset.dp)
