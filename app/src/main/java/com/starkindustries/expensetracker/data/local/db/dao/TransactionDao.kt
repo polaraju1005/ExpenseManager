@@ -16,7 +16,7 @@ interface TransactionDao {
     @Query("DELETE FROM transactions WHERE id = :transactionId")
     suspend fun deleteTransaction(transactionId: Long)
 
-    @Query("SELECT * FROM transactions ORDER BY date DESC")
+    @Query("SELECT * FROM transactions WHERE isDeleted = 0 ORDER BY date DESC")
     fun getAllTransactions(): Flow<List<TransactionEntity>>
 
     @Query("SELECT COUNT(*) FROM transactions WHERE id = :transactionId")
@@ -30,4 +30,10 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions WHERE id = :transactionId LIMIT 1")
     suspend fun getTransactionById(transactionId: Long): TransactionEntity?
+
+    @Query("UPDATE transactions SET isDeleted = 1 WHERE id = :transactionId")
+    suspend fun markAsDeleted(transactionId: Long)
+
+    @Query("SELECT * FROM transactions WHERE isDeleted = 1")
+    suspend fun getPendingDeletions(): List<TransactionEntity>
 }

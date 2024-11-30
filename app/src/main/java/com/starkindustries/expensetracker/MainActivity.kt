@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -92,6 +92,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun NavGraph(navController: NavHostController, googleSignInClient: GoogleSignInClient) {
+        val context = LocalContext.current
         NavHost(
             navController = navController,
             startDestination = if (isSignedIn) "transaction_list_screen" else "sign_in_screen"
@@ -104,7 +105,7 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     viewModel = transactionViewModel,
                     onTransactionDeleted = { id ->
-                        transactionViewModel.deleteTransaction(id)
+                        transactionViewModel.deleteTransaction(id, context)
                     }
                 )
             }

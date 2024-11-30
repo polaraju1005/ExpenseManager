@@ -10,5 +10,6 @@ data class TransactionEntity(
     val type: String = "",
     val amount: Double = 0.0,
     val description: String? = null,
-    var isSynced: Boolean = false
+    var isSynced: Boolean = false,
+    val isDeleted: Boolean = false
 )

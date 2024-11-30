@@ -15,9 +15,9 @@ class TransactionViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
-    fun addTransaction(transaction: TransactionEntity,context: Context) {
+    fun addTransaction(transaction: TransactionEntity, context: Context) {
         viewModelScope.launch {
-            transactionRepository.addTransaction(transaction,context)
+            transactionRepository.addTransaction(transaction, context)
         }
     }
 
@@ -41,15 +41,28 @@ class TransactionViewModel @Inject constructor(
         }
     }
 
-    fun getAllTransactions(): Flow<List<TransactionEntity>> = transactionRepository.getAllTransactions()
 
-    fun deleteTransaction(transactionId: Long) {
+    fun syncDeletions(context: Context) {
         viewModelScope.launch {
-            transactionRepository.deleteTransaction(transactionId)
+            try {
+                transactionRepository.syncPendingDeletions(context)
+            } catch (e: Exception) {
+                throw Exception("Error deletion transactions in Firebase: ${e.message}")
+            }
         }
     }
 
-    fun getTransactionById(id: Long): Flow<TransactionEntity?> = transactionRepository.getTransactionById(id)
+    fun getAllTransactions(): Flow<List<TransactionEntity>> =
+        transactionRepository.getAllTransactions()
+
+    fun deleteTransaction(transactionId: Long, context: Context) {
+        viewModelScope.launch {
+            transactionRepository.deleteTransaction(transactionId, context)
+        }
+    }
+
+    fun getTransactionById(id: Long): Flow<TransactionEntity?> =
+        transactionRepository.getTransactionById(id)
 
     fun updateTransaction(transaction: TransactionEntity) {
         viewModelScope.launch {

@@ -1,5 +1,6 @@
 package com.starkindustries.expensetracker.data.remote.api
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.starkindustries.expensetracker.data.local.db.entities.TransactionEntity
 import com.google.firebase.database.DatabaseReference
@@ -18,10 +19,16 @@ class FirebaseApi @Inject constructor() {
     private val userTransactions: DatabaseReference
         get() = database.child("users").child(userId).child("transactions")
 
-    suspend fun addTransactionToFirebase(transaction: TransactionEntity) {
-        val transactionRef = userTransactions.push()
-        transactionRef.setValue(transaction).await()
+    private suspend fun addTransactionToFirebase(transaction: TransactionEntity) {
+        try {
+            val transactionRef = userTransactions.child(transaction.id.toString())
+            transactionRef.setValue(transaction).await()
+            Log.d("FirebaseApi", "Transaction added to Firebase with ID: ${transaction.id}")
+        } catch (e: Exception) {
+            Log.e("FirebaseApi", "Error adding transaction to Firebase: ${e.message}")
+        }
     }
+
 
     suspend fun getAllTransactionsFromFirebase(): List<TransactionEntity> {
         try {
@@ -39,4 +46,15 @@ class FirebaseApi @Inject constructor() {
             }
         }
     }
+
+    suspend fun deleteTransactionFromFirebase(transactionId: Long) {
+        try {
+            val transactionRef = userTransactions.child(transactionId.toString())
+            transactionRef.removeValue().await()
+            Log.d("FirebaseApi", "Transaction with id $transactionId deleted from Firebase.")
+        } catch (e: Exception) {
+            Log.e("FirebaseApi", "Error deleting transaction from Firebase: ${e.message}")
+        }
+    }
+
 }

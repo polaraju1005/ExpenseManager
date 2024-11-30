@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,9 +69,11 @@ fun TransactionListScreen(
     val transactions by viewModel.getAllTransactions().collectAsState(initial = emptyList())
     var selectedItem by remember { mutableIntStateOf(0) }
     val shouldShowBottomBar = true
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
         viewModel.syncTransactionsToFirebase()
+        viewModel.syncDeletions(context)
     }
 
     Box(

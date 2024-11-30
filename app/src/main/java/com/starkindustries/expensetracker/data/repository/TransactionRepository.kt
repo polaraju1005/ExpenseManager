@@ -1,6 +1,7 @@
 package com.starkindustries.expensetracker.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.starkindustries.expensetracker.data.local.db.dao.TransactionDao
 import com.starkindustries.expensetracker.data.local.db.entities.TransactionEntity
 import com.starkindustries.expensetracker.data.remote.api.FirebaseApi
@@ -13,16 +14,21 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class TransactionRepository @Inject constructor(
-    private val transactionDao: TransactionDao,
-    private val firebaseApi: FirebaseApi
+    private val transactionDao: TransactionDao, private val firebaseApi: FirebaseApi
 ) {
 
     fun getAllTransactions(): Flow<List<TransactionEntity>> {
         return transactionDao.getAllTransactions()
     }
 
-    suspend fun deleteTransaction(transactionId: Long) {
-        transactionDao.deleteTransaction(transactionId)
+    suspend fun deleteTransaction(transactionId: Long, context: Context) {
+        if (isNetworkAvailable(context)) {
+            transactionDao.deleteTransaction(transactionId)
+            firebaseApi.deleteTransactionFromFirebase(transactionId)
+        } else {
+            transactionDao.markAsDeleted(transactionId)
+            getAllTransactions()
+        }
     }
 
     suspend fun addTransaction(transaction: TransactionEntity, context: Context) {
@@ -47,9 +53,8 @@ class TransactionRepository @Inject constructor(
 
     suspend fun syncTransactionsToFirebase() {
         try {
-            val offlineTransactions = transactionDao.getAllTransactions()
-                .first()
-                .filter { !it.isSynced }
+            val offlineTransactions =
+                transactionDao.getAllTransactions().first().filter { !it.isSynced }
 
             if (offlineTransactions.isNotEmpty()) {
                 firebaseApi.syncOfflineTransactions(offlineTransactions)
@@ -71,5 +76,27 @@ class TransactionRepository @Inject constructor(
         transactionDao.updateTransaction(transaction)
     }
 
+    suspend fun syncPendingDeletions(context: Context) {
+        if (isNetworkAvailable(context)) {
+            val transactionsToDelete = transactionDao.getPendingDeletions()
+            for (transaction in transactionsToDelete) {
+                try {
+                    firebaseApi.deleteTransactionFromFirebase(transaction.id)
+                    transactionDao.deleteTransaction(transaction.id)
+                    Log.d(
+                        "Sync",
+                        "Transaction with id ${transaction.id} synced and deleted from Firebase."
+                    )
+                } catch (e: Exception) {
+                    Log.e(
+                        "Sync",
+                        "Error deleting transaction with id ${transaction.id}: ${e.message}"
+                    )
+                }
+            }
+        } else {
+            Log.d("Sync", "No network available. Cannot sync pending deletions.")
+        }
+    }
 
 }

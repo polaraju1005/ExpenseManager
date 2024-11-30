@@ -139,7 +139,7 @@ fun TransactionDetailScreen(
                             )
                         }
                         IconButton(onClick = {
-                            viewModel.deleteTransaction(transactionId)
+                            viewModel.deleteTransaction(transactionId,context)
                             navController.popBackStack()
                         }) {
                             Image(
