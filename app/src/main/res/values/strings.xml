@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Expense</string>
+    <string name="app_name">Expense Manager</string>
     <string name="default_web_client_id">515245317465-jbjkqd4ukmui8e9seun3sibsbfu9ef4v.apps.googleusercontent.com</string>
     <string name="expense">Expense</string>
 </resources>
