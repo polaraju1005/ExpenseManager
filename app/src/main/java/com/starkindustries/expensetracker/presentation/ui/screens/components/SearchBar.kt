@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +38,8 @@ import androidx.compose.ui.unit.sp
 import com.starkindustries.expensetracker.R
 import com.starkindustries.expensetracker.ui.theme.Purple80
 import kotlinx.coroutines.delay
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 
 @Composable
 fun SearchBar(
@@ -51,6 +54,7 @@ fun SearchBar(
     var currentWordIndex by remember { mutableIntStateOf(0) }
     var animateOffset by remember { mutableFloatStateOf(20f) }
     var isTextVisible by remember { mutableStateOf(true) }
+    var showFilterDialog by remember { mutableStateOf(false) }
 
     val animatedOffset by animateFloatAsState(
         targetValue = animateOffset, animationSpec = tween(

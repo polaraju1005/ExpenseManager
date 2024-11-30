@@ -112,7 +112,8 @@ fun TransactionDetailScreen(
                                 val updatedTransaction = transaction!!.copy(
                                     description = updatedDescription,
                                     amount = updatedAmount.toDoubleOrNull() ?: 0.0,
-                                    date = updatedDate
+                                    date = updatedDate,
+                                    isSynced = false
                                 )
                                 viewModel.updateTransaction(updatedTransaction)
                                 isEditMode = false
@@ -139,7 +140,7 @@ fun TransactionDetailScreen(
                             )
                         }
                         IconButton(onClick = {
-                            viewModel.deleteTransaction(transactionId,context)
+                            viewModel.deleteTransaction(transactionId, context)
                             navController.popBackStack()
                         }) {
                             Image(
@@ -152,7 +153,7 @@ fun TransactionDetailScreen(
                 modifier = Modifier
                     .padding(vertical = 1.dp)
                     .fillMaxWidth(),
-                colors = TopAppBarDefaults.smallTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.White
                 )
             )
