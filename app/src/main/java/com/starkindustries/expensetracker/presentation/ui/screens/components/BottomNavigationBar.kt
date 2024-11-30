@@ -28,8 +28,8 @@ fun BottomNavigationBar(
 ) {
     if (shouldShow) {
         val items = listOf(
-            NavigationItem("Dashboard", R.drawable.baseline_home_24, 0),
-            NavigationItem("Settings", R.drawable.baseline_settings_24, 1),
+            NavigationItem("Dashboard", R.drawable.ic_home, 0),
+            NavigationItem("Settings", R.drawable.ic_settings, 1),
         )
 
         Column(modifier = modifier.fillMaxWidth()) {
