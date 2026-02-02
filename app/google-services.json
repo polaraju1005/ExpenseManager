@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "515245317465",
+    "firebase_url": "https://expensemanager-dbd83-default-rtdb.firebaseio.com",
+    "project_id": "expensemanager-dbd83",
+    "storage_bucket": "expensemanager-dbd83.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515245317465:android:8d484475854288e4a60048",
+        "android_client_info": {
+          "package_name": "com.starkindustries.expensetracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515245317465-jbjkqd4ukmui8e9seun3sibsbfu9ef4v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.starkindustries.expensetracker",
+            "certificate_hash": "67dcda854fc39f731fbeef61fddeae8eba8b7b9f"
+          }
+        },
+        {
+          "client_id": "515245317465-4s1e5opc8oebe2hkq3oe6m982no8luf7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCplRFqrrfQI_dcAF7OOMRzsry3tN0LTZk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515245317465-4s1e5opc8oebe2hkq3oe6m982no8luf7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
